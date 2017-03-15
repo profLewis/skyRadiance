@@ -1,0 +1,232 @@
+Atmosphere {
+
+#
+#	Aerosol scattering phase function
+#	*********************************
+#
+# two-term Henyey Greenstein parameters - a g1 g2
+# for areosol phase function
+# a is a weighting parameter, g1, g2 are asymmetry parameters
+# although these parameters are assumed constant with wavelength,
+# they may not be....
+# [Kattawar, 1975] gives the following parameters calculated at 550nm
+# which may be used as defaults. 
+# 	a  - might typically vary between 0.8 and 0.975 
+#	g1 - might typically vary between 0.71 and 0.79
+#	g2 - might typically vary between -0.764 and -0.286
+#
+#	(depending on the aerosol size distribution and refractive index)
+#
+# without fitting the function to various distributions,
+# there is no real way of knowing sensible values to use....
+
+	TTHG 1.0 0.65 0.0
+
+#
+#	Aerosol optical depth parameters
+#	********************************
+#
+# parameters of aerosol optical depth formulae - alpha beta omega_A [H_Penndorf]
+#
+# omega_A is the aerosol single scattering albedo (assumed to be
+# invariant with wavelength), which relates to the partitioning of
+# aerosol optical depth between scattering and absorption.
+# typical values are:
+# 	0.6 - urban/industrial
+#	0.9 - continental
+# 	1.0 - maritime (pure scattering)
+# the default value given here is therefore for continental aerosols
+# 
+# The parameters alpha and beta are used to give the aerosol
+# optical depth [Angstrom, 1961] according to the empirical formula:
+#
+#	tau_A = beta * lambda^(-alpha)
+#
+# alpha is known as the wavelength exponent, and beta is a
+# turbidity coefficient.
+#
+# alpha is generally in the range 1.3 +/- 0.2
+# being seldom below 0.5 (polluted atmosphere e.g. forest fire, volcano)
+# or above 1.6.
+#
+# [Angstrom, 1961] gives a formula for annual _mean_ values of beta 
+# as a function of latitude (phi) and altitude (h in km above sea level):
+#
+#	beta = (0.025 + 0.100*cos^2(phi))*exp(-0.7*h)
+#
+# There is considerable seasonal variation in beta, with a maximum in
+# mid-summer & a minimum in mid-winter. For Washington (State?), beta varies
+# between around 0.05 in winter to 0.16 in summer. For Stockholm, it
+# varies between about 0.03 in winter to 0.113 in summer.
+#
+# [Leckner, 1978] gives a table of high/medium/low values for 
+# various latitudes:
+#
+#	lat:	  |	60N	45N	30N	0
+#	----------------------------------------------
+#	low lim:  |	0.01	0.047	0.047	0.047
+#	med lim:  |	0.057	0.077	0.097	0.117
+#	high lim: |	0.093	0.187	0.375	0.375
+#
+# so a value of 0.1 is the mean annual value for about 30N or 30S
+# or mid-March or mid-September in Aachen
+# or beginning of April or beginning of July in Stockholm
+# or mid-Feb or beginning of August in Washington
+#
+#	H_Penndorf - haven't got much information on this...
+#		~4 (km) for Antarctica [Shaw, 1982]
+#		a value of 0.97 is suggested for over the sea
+#		[Guzzi et al., 1987]. It relates to the vertical
+#		distribution of aerosols (assumed to decay
+#		according to exp(-h/H_Penndorf) (h,H_Penndorf in km)
+#		It is an optional parameter & is only used if
+#		-altitude and/or -ground flags are set in 'sky'
+# as an alternative to this, the aerosol density function can be given 
+# as a function of height 
+#
+#	changed for polluted atmosphere/urban/industrial aerosols
+	Aerosol 0.0 0.5 0.94
+
+#
+#	Rayleigh scattering optical depth
+#	*********************************
+#
+#	tau_R = A*(lambda^(-B + C*lambda + D/lambda))
+#
+# parameters for rayleigh scattering optical depth model - A B C D
+# (you shouldn't need to change these, except for A (see man page!!)
+# unless using a different formulation)
+# These values are from [Frolich & Shaw, 1980]
+
+	Rayleigh 0.00 3.916 0.074 0.050
+
+#
+#	Ozone optical depth
+#	*******************
+#
+# Ozone optical depth parameters - CO3 [b] [c] [KO3]
+# where CO3 is the Ozone concentration (cm) in a vertical column
+# and KO3 is a file containing spectral absorption coefficients of
+# Ozone (cm^-1).
+#
+# KO3 data are from [Leckner, 1978] (you shouldn't need to change these)
+# CO3 is generally in the range 0.2 to 0.6, and is typically 0.3-0.4 cm (NTP).
+#
+# specification of the KO3 filename is optional.
+#
+# b,c are Green's distribution parameters
+# b is the height (km) of maximum ozone concentration
+# the magnitude of maximum concentration is:
+# [Lacis and Hansen, 1974]
+#	
+#	CO3 * (1 + exp(-b/c))/(4c)
+#
+# typical values (mid-latitude winter Ozone distribution)
+# b=20 km
+# c=5  km
+#
+
+	Ozone 0.0 20 5 /ps/research/charon/lewis/plants/fractals/plant_code/prat/ZV/ATMOS/LEWIS/KO3.null
+
+#
+#	Surface bihemispherical reflectance
+#	***********************************
+#
+# Surface bihemispherical reflectance (so-called 'spectral albedo')
+# parameters - RHO
+#
+# rho varies considerably, depending on the land cover /sea
+# a variety of spectral data is provided (source: 5S FORTRAN code)
+# for clear_water, lake_water, dry_sand, and vegetation
+# (clear_water.albedo, lake_water.albedo, dry_sand.albedo and
+# veg.albedo, respectively)
+#
+# Default is for vegetation.
+#
+
+	Albedo /ps/research/charon/lewis/plants/fractals/plant_code/prat/ZV/ATMOS/LEWIS/null.albedo
+
+#
+#	Water vapour optical depth
+#	**************************
+#
+# water vapour optical depth parameters - CW [Td [KW]]
+# where CW is the total precipitable water vapour in a vertical column (cm)
+# and KW is a file containing spectral absorption coefficients of
+# water vapour (cm^-1).
+#
+# KW data are from [Leckner, 1978] (you shouldn't need to change these)
+# Typical values of CW are tabulated by [Leckner, 1978]:
+#
+#			CW
+#	---------------------
+#	15N	      |	4.1
+#	45N (summer)  | 2.9
+#	45N (winter)  | 0.9
+#	60N (summer)  | 2.1
+#	60N (winter)  | 0.4
+#	US62	      | 1.4
+#
+# alternatively, the following relationships can be used:
+#
+# 	CW = 227.673 density_water(0)  	(standard atmosphere)
+#
+# where the density of water vapour (density_water(0)) can be obtained
+# from tables or calculated from:
+#	
+#	density_water(0) = phi * Ps / (R * T(0))
+#
+# where 
+#	phi  is the relative humidity (fractions of 1)
+#	Ps   is the water vapour saturation pressure
+#	T(0) is the absolute temperature (K)
+#	R    is the gas constant ( = 461.51)
+#
+# Ps can be obtained from tables or calculated from:
+#
+#	Ps = exp(-5416/T(0) + 26.23)
+#
+# The default value of CW is 1.4 (i.e. the US62 value)
+#
+# Td is the dew point temperature, which is "the temperature at
+# which the sturated vapour pressure of the water vapour is equal
+# to the partial pressure of the water vapour in the atmosphere"
+# [Nelkon & Parker, 1974]. Td is in degrees Celsius. A value of
+# Td = 10.02 gives beta_0 = 0.639 [Guzzi et al., 1987]
+#
+# this is used in the following expression to calculate the scale
+# height parameter of water vapour (beta_0) [Tomasi, 1977]:
+# 
+#	beta_0 = exp(-(lnCw - 0.061Td + 0.715)/0.983)
+#
+# the scale height Hw, being given by [Reitan, 1963]:
+#
+#	Hw(h0) = 1 - exp(-beta_0 * h0)
+#
+# specification of Td and the KW filename are optional.
+#
+
+	Water_vapour 0.0 10.02 /ps/research/charon/lewis/plants/fractals/plant_code/prat/ZV/ATMOS/LEWIS/KW
+
+#
+#	Uniformly mixed gas optical depth
+#	*********************************
+#
+# Filename for uniformly mixed gas optical depth - KG
+# from [Leckner, 1978] (you shouldn't need to change this)
+# 
+
+	Mixed_gas /ps/research/charon/lewis/plants/fractals/plant_code/prat/ZV/ATMOS/LEWIS/KG.null
+
+#
+#	Extraterrestrial solar irradiance
+#	*********************************
+#
+# Filename for extraterrestrial solar irradiance - E0
+# at mean Earth-Sun distance.
+# data are from [Neckel and Labs, 1981]
+# (you shouldn't need to change this).
+#
+
+	E0D	/ps/research/charon/lewis/plants/fractals/plant_code/prat/ZV/ATMOS/LEWIS/E0D.pi
+}

@@ -1,0 +1,53 @@
+#!/bin/csh -f
+
+#
+#	this shell calculates the height distribution of 
+#	ozone according to Green's distribution:
+#
+#	rho(h) = 1/(1 + exp((h-b)/c))
+#
+#	where h is the altitude (km)
+#
+#	b is the height (km) of maximum Ozone concentration
+#	the magnitude of maximum concentration is:
+# 	[Lacis and Hansen, 1974]
+#	
+#		(1 + exp(-b/c))/(4c)
+#
+# 	typical values (mid-latitude winter Ozone distribution):
+#	b=20 km
+# 	c=5  km
+#
+#	it takes 1 argument (H) which defaults to 0.97 km
+#	[Guzzi et al., 1987] which is applicable for aerosols
+#	over the sea. A value of 4 km is suggested [Shaw, 1982]
+#	for Antarctic aerosols
+
+if (${#argv} <2) then
+	set B = 20
+	set C = 5
+else
+	set B = $1
+	set C = $2
+endif
+
+echo  #
+echo "#	ozone height distribution calculated by " `which $0`
+echo "#	file generated on: " `date`
+echo  #
+echo "#	parameter b assumed to be $B km"
+echo "#	parameter c assumed to be $C km"
+echo "#	height distribution calculated according to:"
+echo "#"
+echo "#	rho(h) = 1/(1 + exp(-b/c))"
+echo "#"
+echo "#	where h is the altitude (km)"
+echo "#	and b,c are the height (km) parameters of the Green function"
+echo "#	b is the height (km) of maximum Ozone concentration"
+echo "#	The relative (i.e divided by the total ozone concentration)"
+echo "#	magnitude of maximum concentration is:"
+echo "#	(1 + exp(-b/c))/(4c)"
+echo "#"
+
+echo $B $C | nawk '{for(i=0;i<25;i+=0.1){print i,1/(1 + exp((i-$1)/$2))}for(;i<50;i+=0.2){print i,1/(1 + exp((i-$1)/$2))}for(;i<100;i++){print i,1/(1 + exp((i-$1)/$2))}}'
+
