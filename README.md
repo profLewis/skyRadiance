@@ -1,2 +1,6 @@
 # skyRadiance
-Generate a texture map of sky radiance for use with ray tracers
+Generate a sky radiance dataset Based on Zibbordi & Voss.
+
+![Solaris](movie.gif "Solaris")
+
+
